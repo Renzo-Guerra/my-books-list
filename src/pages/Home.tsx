@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Book } from "../interfaces";
 import { BookRow } from "../components/desktop/BookRow";
 import { Target } from "../components/mobile";
@@ -87,41 +87,65 @@ const mockBooks: Book[] = [
 ];
 
 export const HomePage = () => {
-  const [books, setBooks] = useState<Book[]>(mockBooks);
+  const [books, setBooks] = useState<Book[]>();
+
+  useEffect(() => {
+    const loadBooks = () => {
+      const data = localStorage.getItem("books");
+      setBooks(data ? JSON.parse(data) : []);
+    }
+
+    loadBooks();
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "books") {
+        loadBooks();
+      }
+    }
+    // Updates books values (Just if "books" was updated)
+    window.addEventListener("storage", handleStorageChange);
+
+    return window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   return (
     <>
       <div className="w-full p-2">
-        {/* Versión para pantallas grandes */}
-        <div className="hidden md:block overflow-x-auto rounded-2xl shadow-md border border-gray-200 bg-white">
-          <table className="w-full text-sm text-left text-gray-700">
-            <thead className="bg-gray-100 text-gray-900 font-semibold">
-              <tr className="grid grid-cols-[2fr_1.5fr_1fr_1fr_0.8fr_0.5fr] px-4 py-2 text-center">
-                <th>Title</th>
-                <th>Author</th>
-                <th>Began reading</th>
-                <th>Ended reading</th>
-                <th>Current state</th>
-                <th>Score</th>
-              </tr>
-            </thead>
-            <tbody>
+        {books && books.length > 0 ? (
+          <>
+            {/* Desktop UI */}
+            <div className="hidden md:block overflow-x-auto rounded-2xl shadow-md border border-gray-200 bg-white">
+              <table className="w-full text-sm text-left text-gray-700">
+                <thead className="bg-gray-100 text-gray-900 font-semibold">
+                  <tr className="grid grid-cols-[2fr_1.5fr_1fr_1fr_0.8fr_0.5fr] px-4 py-2 text-center">
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Began reading</th>
+                    <th>Ended reading</th>
+                    <th>Current state</th>
+                    <th>Score</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {books.map((book, index) => (
+                    <BookRow
+                      key={index}
+                      book={book}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {/* Mobile UI */}
+            <div className="flex flex-col gap-3 md:hidden mt-3">
               {books.map((book, index) => (
-                <BookRow
-                  key={index}
-                  book={book}
-                />
+                <Target book={book} key={index} />
               ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Versión para móviles */}
-        <div className="flex flex-col gap-3 md:hidden mt-3">
-          {books.map((book, index) => (
-            <Target book={book} key={index} />
-          ))}
-        </div>
+            </div>
+          </>
+        ) : (
+          <p>Whoops! It seems like there aren't any books saved</p>
+        )}
       </div>
     </>
   )
