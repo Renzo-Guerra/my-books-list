@@ -28,7 +28,7 @@ export const FormAddBook = ({ onSubmitHandler }: props) => {
     <>
       <form
         onSubmit={handleSubmit(_onSubmitHandler)}
-        className="my-5 mx-auto max-w-md bg-white shadow-lg rounded-md px-6 py-8 space-y-2 border border-gray-100"
+        className="my-auto mx-auto max-w-md bg-white shadow-lg rounded-md px-6 py-8 space-y-2 border border-gray-100"
       >
         <h3 className="text-2xl font-semibold text-gray-800 text-center mb-4">📚 Add a Book</h3>
 
@@ -66,37 +66,13 @@ export const FormAddBook = ({ onSubmitHandler }: props) => {
           >
             <option value="read">Read</option>
             <option value="reading">Reading</option>
-            <option value="to read">Pending</option>
+            <option value="pending">Pending</option>
           </select>
           {errors.state && <p className="text-sm text-red-500">{errors.state.message}</p>}
         </div>
 
-        {(bookState === "read" || bookState === "reading") && (
-          <div className="space-y-1">
-            <label htmlFor="beginReading" className="block text-gray-700 font-medium">Began reading</label>
-            <input
-              type="date"
-              {...register("beginReading")}
-              id="beginReading"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-            />
-            {errors.beginReading && <p className="text-sm text-red-500">{errors.beginReading.message}</p>}
-          </div>
-        )}
-
         {bookState === "read" && (
           <>
-            <div className="space-y-1">
-              <label htmlFor="finishReading" className="block text-gray-700 font-medium">Finish reading</label>
-              <input
-                type="date"
-                {...register("finishReading")}
-                id="finishReading"
-                className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
-              />
-              {errors.finishReading && <p className="text-sm text-red-500">{errors.finishReading.message}</p>}
-            </div>
-
             <div className="space-y-1">
               <label htmlFor="score" className="block text-gray-700 font-medium">Score</label>
               <input
@@ -114,7 +90,7 @@ export const FormAddBook = ({ onSubmitHandler }: props) => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-blue-500 text-white font-medium py-2.5 rounded-md hover:bg-blue-600 disabled:opacity-70 transition-colors"
+          className="w-full bg-blue-500 text-white font-medium mt-5 py-2.5 rounded-md hover:bg-blue-600 disabled:opacity-70 transition-colors"
         >
           {isSubmitting ? "Saving..." : "Save"}
         </button>
