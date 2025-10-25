@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import type { Book } from "../interfaces";
 import { BookRow } from "../components/desktop/BookRow";
 import { Target } from "../components/mobile";
+import { useBooksContext } from "../context/BooksProvider";
+
 
 const mockBooks: Book[] = [
   {
@@ -67,41 +68,23 @@ const mockBooks: Book[] = [
 ];
 
 export const HomePage = () => {
-  const [books, setBooks] = useState<Book[]>();
-
-  useEffect(() => {
-    const loadBooks = () => {
-      const data = localStorage.getItem("books");
-      setBooks(data ? JSON.parse(data) : []);
-    }
-
-    loadBooks();
-
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === "books") {
-        loadBooks();
-      }
-    }
-    // Updates books values (Just if "books" was updated)
-    window.addEventListener("storage", handleStorageChange);
-
-    return window.removeEventListener("storage", handleStorageChange);
-  }, []);
+  const { books } = useBooksContext();
 
   return (
     <>
-      <div className="w-full p-2">
+      <div className="w-full p-2 max-w-6xl mx-auto">
         {books && books.length > 0 ? (
           <>
             {/* Desktop UI */}
             <div className="hidden md:block overflow-x-auto rounded-2xl shadow-md border border-gray-200 bg-white">
               <table className="w-full text-sm text-left text-gray-700">
                 <thead className="bg-gray-100 text-gray-900 font-semibold">
-                  <tr className="grid grid-cols-[2fr_1.5fr_1fr_0.5fr] px-4 py-2">
+                  <tr className="grid grid-cols-[2fr_1.5fr_1fr_0.5fr_0.9fr] px-4 py-2">
                     <th>Title</th>
                     <th>Author</th>
                     <th className="text-center">Current state</th>
                     <th className="text-center">Score</th>
+                    <th className="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
