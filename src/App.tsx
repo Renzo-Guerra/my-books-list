@@ -1,5 +1,5 @@
 import { HashRouter, Routes, Route } from "react-router-dom"
-import { AddBookPage, HomePage, NotFoundPage, } from "./pages"
+import { HomePage, NotFoundPage, } from "./pages"
 import { Toaster } from "react-hot-toast"
 import { BooksProvider } from "./context/BooksProvider"
 
@@ -16,7 +16,6 @@ function App() {
                 <HomePage />
               </BooksProvider>
             } />
-          <Route path="/books/add" element={<AddBookPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </HashRouter>

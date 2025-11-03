@@ -5,10 +5,11 @@ import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface props {
-  onSubmitHandler: (data: Book) => Promise<any>;
+  onSubmitHandler: (data: Book) => Promise<any>,
+  onCancel: () => void,
 }
 
-export const FormAddBook = ({ onSubmitHandler }: props) => {
+export const FormAddBook = ({ onSubmitHandler, onCancel }: props) => {
   const [bookState, setBookState] = useState<string>("read");
   const { register, handleSubmit, reset, formState: { isSubmitting, errors } } = useForm<Book>({ resolver: zodResolver(bookSchema) });
 
@@ -87,13 +88,22 @@ export const FormAddBook = ({ onSubmitHandler }: props) => {
           </>
         )}
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full bg-blue-500 text-white font-medium mt-5 py-2.5 rounded-md hover:bg-blue-600 disabled:opacity-70 transition-colors"
-        >
-          {isSubmitting ? "Saving..." : "Save"}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            className="grow-1 mt-5 py-2.5 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200 font-medium cursor-pointer"
+            onClick={onCancel}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="grow-1 mt-5 py-2.5 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 disabled:opacity-70 transition-colors cursor-pointer"
+          >
+            {isSubmitting ? "Saving..." : "Save"}
+          </button>
+        </div>
       </form>
     </>
   )
