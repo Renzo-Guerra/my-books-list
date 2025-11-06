@@ -6,10 +6,18 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useBooksContext } from "../../context/BooksProvider";
 import { createPortal } from "react-dom";
+import { FormEditBook } from "../mobile/FormEditBook";
 
-export const BookRow = ({ book }: { book: Book }) => {
+interface Props {
+  book: Book,
+  onSubmitHandler: (oldData: Book, newData: Book) => Promise<any>,
+}
+
+export const BookRow = ({ book, onSubmitHandler }: Props) => {
   const { title, author, state, score } = book;
-  const [layer, setLayer] = useState(false);
+  const [modalCancel, setModalCancel] = useState(false);
+  const [modalEditBook, setModalEditBook] = useState(false);
+
   const { setBooks } = useBooksContext();
 
   const deleteRow = async (): Promise<Book[]> => {
@@ -34,7 +42,12 @@ export const BookRow = ({ book }: { book: Book }) => {
         success: "Book deleted successfully!",
         error: "Opps! Something went wrong, try again",
       }
-    ).finally(() => setLayer(false));
+    ).finally(() => setModalCancel(false));
+  }
+
+  const _onSubmitHandler = async (oldData: Book, newData: Book): Promise<any> => {
+    onSubmitHandler(oldData, newData)
+      .then(() => setModalEditBook(false));
   }
 
   return (
@@ -46,12 +59,15 @@ export const BookRow = ({ book }: { book: Book }) => {
         <td className="text-center">{score ?? "-"}</td>
         <td>
           <div className="grid grid-cols-2 gap-2">
-            <button className="flex gap-1 justify-center items-center p-1 cursor-pointer border rounded-sm bg-sky-800 text-white hover:bg-sky-600 transition-colors duration-200">
+            <button
+              className="flex gap-1 justify-center items-center p-1 cursor-pointer border rounded-sm bg-sky-800 text-white hover:bg-sky-600 transition-colors duration-200"
+              onClick={() => setModalEditBook(true)}
+            >
               <FaPenToSquare /> Edit
             </button>
             <button
               className="flex gap-1 justify-center items-center p-1 cursor-pointer border rounded-sm bg-red-800 text-white hover:bg-red-600 transition-colors duration-200"
-              onClick={() => setLayer(true)}
+              onClick={() => setModalCancel(true)}
             >
               <FiTrash2 /> Delete
             </button>
@@ -59,7 +75,19 @@ export const BookRow = ({ book }: { book: Book }) => {
         </td>
       </tr >
 
-      {layer &&
+      {modalEditBook && (
+        createPortal(
+          <div className="fixed inset-0 z-50 min-h-auto flex items-center justify-center backdrop-contrast-30 p-4">
+            <FormEditBook
+              onSubmitHandler={_onSubmitHandler}
+              onCancelHandler={() => setModalEditBook(false)}
+              book={book}
+            />
+          </div>,
+          document.body)
+      )}
+
+      {modalCancel &&
         createPortal(
           <div
             className="fixed inset-0 z-50 min-h-auto flex items-center justify-center backdrop-contrast-30 p-4">
@@ -74,7 +102,7 @@ export const BookRow = ({ book }: { book: Book }) => {
               <div className="flex justify-end gap-3 mt-4">
                 <button
                   className="px-4 py-2 rounded-lg text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200 font-medium cursor-pointer"
-                  onClick={() => setLayer(false)}
+                  onClick={() => setModalCancel(false)}
                 >
                   Cancel
                 </button>

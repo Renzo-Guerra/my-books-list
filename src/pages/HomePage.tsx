@@ -9,16 +9,17 @@ import { useState } from "react";
 
 export const HomePage = () => {
   const { books, setBooks } = useBooksContext();
-  const [modal, setModal] = useState(false);
+  const [modalAddBook, setModalAddBook] = useState(false);
 
-  const onSubmitHandler: SubmitHandler<Book> = async (data: Book): Promise<Book[]> => {
+  const onSubmitHandlerAddBook: SubmitHandler<Book> = async (data: Book): Promise<Book[]> => {
     try {
       const currentBooks = localStorage.getItem("books");
       const books: Book[] = currentBooks ? JSON.parse(currentBooks) : [];
       books.push(data);
       localStorage.setItem("books", JSON.stringify(books));
-      setModal(false);
+      setModalAddBook(false);
       setBooks(books);
+
       return books;
     } catch (error) {
       console.error("Error al guardar el libro:", error);
@@ -26,10 +27,30 @@ export const HomePage = () => {
     }
   }
 
-  const handleThing = () => {
-    console.log("anda");
-    setModal(true);
+  const booksAreEqual = (book1: Book, book2: Book) => {
+    return book1.title === book2.title &&
+      book1.author === book2.author &&
+      book1.state === book2.state &&
+      book1.score === book2.score;
+  }
 
+  const onSubmitHandlerEditBook: SubmitHandler<Book> = async (oldData: Book, newData: Book): Promise<Book[]> => {
+    try {
+      const currentBooks = localStorage.getItem("books");
+      const books: Book[] = currentBooks ? JSON.parse(currentBooks) : [];
+      const index = books.findIndex(current => booksAreEqual(current, oldData));
+
+      if (index !== -1) {
+        books[index] = newData;
+        localStorage.setItem("books", JSON.stringify(books));
+        setBooks(books);
+      }
+
+      return books;
+    } catch (error) {
+      console.error("Error al guardar el libro:", error);
+      throw error;
+    }
   }
 
   return (
@@ -45,7 +66,7 @@ export const HomePage = () => {
                   <h2>Want to add more?</h2>
                   <button
                     className="flex gap-1 justify-center items-center px-2 py-1 cursor-pointer rounded-sm bg-green-500 text-white hover:bg-green-600 transition-colors duration-200"
-                    onClick={handleThing}>
+                    onClick={() => setModalAddBook(true)}>
                     <IoIosAddCircleOutline /> Add
                   </button>
                 </div>
@@ -65,6 +86,7 @@ export const HomePage = () => {
                     <BookRow
                       key={index}
                       book={book}
+                      onSubmitHandler={onSubmitHandlerEditBook}
                     />
                   ))}
                 </tbody>
@@ -77,9 +99,11 @@ export const HomePage = () => {
               ))}
             </div>
             {/* modal */}
-            {modal && (
+            {modalAddBook && (
               <div className="fixed inset-0 z-50 min-h-auto flex items-center justify-center backdrop-contrast-30 p-4">
-                <FormAddBook onSubmitHandler={onSubmitHandler} onCancel={() => setModal(false)} />
+                <FormAddBook
+                  onSubmitHandler={onSubmitHandlerAddBook}
+                  onCancelHandler={() => setModalAddBook(false)} />
               </div>
             )}
           </>

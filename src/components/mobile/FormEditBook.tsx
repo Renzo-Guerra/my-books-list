@@ -1,26 +1,36 @@
-import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { bookSchema, type Book } from "../../interfaces";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface props {
-  onSubmitHandler: (data: Book) => Promise<Book[]>,
+  onSubmitHandler: (oldData: Book, newData: Book) => Promise<Book[]>;
   onCancelHandler: () => void,
+  book: Book,
 }
 
-export const FormAddBook = ({ onSubmitHandler, onCancelHandler }: props) => {
-  const [bookState, setBookState] = useState<string>("read");
+export const FormEditBook = ({ onCancelHandler, onSubmitHandler, book }: props) => {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { isSubmitting, errors } }
-    = useForm<Book>({ resolver: zodResolver(bookSchema) });
+    watch,
+    formState: { isSubmitting, errors } } = useForm<Book>(
+      {
+        resolver: zodResolver(bookSchema),
+        defaultValues: book || {
+          title: "",
+          author: "",
+          state: "read",
+          score: undefined,
+        }
+      });
+
+  const bookState = watch("state");
 
   const _onSubmitHandler: SubmitHandler<Book> = async (data: Book) => {
     await toast.promise(
-      onSubmitHandler(data),
+      onSubmitHandler(book, data),
       {
         loading: "Saving...",
         success: "Book saved successfully!",
@@ -36,7 +46,7 @@ export const FormAddBook = ({ onSubmitHandler, onCancelHandler }: props) => {
         onSubmit={handleSubmit(_onSubmitHandler)}
         className="my-auto mx-auto max-w-md bg-white shadow-lg rounded-md px-6 py-8 space-y-2 border border-gray-100"
       >
-        <h3 className="text-2xl font-semibold text-gray-800 text-center mb-4">📚 Add a Book</h3>
+        <h3 className="text-2xl font-semibold text-gray-800 text-center mb-4">📚 {book ? "Edit" : "Add"} book</h3>
 
         <div className="space-y-1">
           <label htmlFor="title" className="block text-gray-700 font-medium">Title</label>
@@ -67,7 +77,6 @@ export const FormAddBook = ({ onSubmitHandler, onCancelHandler }: props) => {
           <select
             id="state"
             {...register("state")}
-            onChange={(e) => setBookState(e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           >
             <option value="read">Read</option>
@@ -106,7 +115,7 @@ export const FormAddBook = ({ onSubmitHandler, onCancelHandler }: props) => {
             disabled={isSubmitting}
             className="grow-1 mt-5 py-2.5 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 disabled:opacity-70 transition-colors cursor-pointer"
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting ? (book ? "Updating..." : "Saving...") : (book ? "Update" : "Save")}
           </button>
         </div>
       </form>
