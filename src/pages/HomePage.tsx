@@ -2,7 +2,6 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { BookRow } from "../components/desktop/BookRow";
 import { FormAddBook } from "../components/mobile";
 import { useBooksContext } from "../context/BooksProvider";
-import type { SubmitHandler } from "react-hook-form";
 import type { Book } from "../interfaces";
 import { useState } from "react";
 
@@ -11,7 +10,7 @@ export const HomePage = () => {
   const { books, setBooks } = useBooksContext();
   const [modalAddBook, setModalAddBook] = useState(false);
 
-  const onSubmitHandlerAddBook: SubmitHandler<Book> = async (data: Book): Promise<Book[]> => {
+  const onSubmitHandlerAddBook = async (data: Book): Promise<Book[]> => {
     try {
       const currentBooks = localStorage.getItem("books");
       const books: Book[] = currentBooks ? JSON.parse(currentBooks) : [];
@@ -34,7 +33,7 @@ export const HomePage = () => {
       book1.score === book2.score;
   }
 
-  const onSubmitHandlerEditBook: SubmitHandler<Book> = async (oldData: Book, newData: Book): Promise<Book[]> => {
+  const onSubmitHandlerEditBook = async (oldData: Book, newData: Book): Promise<Book[]> => {
     try {
       const currentBooks = localStorage.getItem("books");
       const books: Book[] = currentBooks ? JSON.parse(currentBooks) : [];
