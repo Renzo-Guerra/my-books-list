@@ -115,7 +115,30 @@ export const HomePage = () => {
             )}
           </>
         ) : (
-          <p>Whoops! It seems like there aren't any books saved</p>
+          <>
+            <div>
+              <div className="flex items-center justify-between px-3 mb-3">
+                <h2>Books</h2>
+                <div className="flex items-center justify-end gap-3 grow">
+                  <h2>Want to add more?</h2>
+                  <button
+                    className="flex gap-1 justify-center items-center px-2 py-1 cursor-pointer rounded-sm bg-green-500 text-white hover:bg-green-600 transition-colors duration-200"
+                    onClick={() => setModalAddBook(true)}>
+                    <IoIosAddCircleOutline /> Add
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p>Whoops! It seems like there aren't any books saved</p>
+            {/* modal */}
+            {modalAddBook && (
+              <div className="fixed inset-0 z-50 min-h-auto flex items-center justify-center backdrop-contrast-30 p-4">
+                <FormAddBook
+                  onSubmitHandler={onSubmitHandlerAddBook}
+                  onCancelHandler={() => setModalAddBook(false)} />
+              </div>
+            )}
+          </>
         )}
       </div>
     </>
