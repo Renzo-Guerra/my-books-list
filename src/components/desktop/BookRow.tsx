@@ -52,7 +52,8 @@ export const BookRow = ({ book, onSubmitHandler }: Props) => {
 
   return (
     <>
-      <tr className="grid grid-cols-[2fr_1.5fr_1fr_0.5fr_0.9fr] items-center px-4 py-2 border-b border-gray-100 hover:bg-gray-50 transition">
+      {/* Desktop */}
+      <tr className="hidden md:grid grid-cols-[2fr_1.5fr_1fr_0.5fr_0.9fr] items-center px-4 py-2 border-b border-gray-100 hover:bg-gray-50 transition">
         <td className="truncate">{title}</td>
         <td className="truncate">{author}</td>
         <td className={`text-center font-medium ${colorForState(state)}`}>{state}</td>
@@ -74,6 +75,36 @@ export const BookRow = ({ book, onSubmitHandler }: Props) => {
           </div>
         </td>
       </tr >
+      {/* Desktop */}
+
+      {/* Mobile */}
+      <div
+        className="bg-white rounded-2xl shadow p-4 border border-gray-100 md:hidden"
+      >
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        <p className="text-gray-600 text-sm mb-2">{author}</p>
+        <div className="grid grid-cols-2 text-sm">
+          <div>
+            <p><span className="font-semibold">State:</span> <span className={`${colorForState(state)}`}>{state}</span></p>
+            <p><span className="font-semibold">Score:</span> {score ?? "-"}</p>
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button
+              className="flex gap-1 justify-center items-center py-1 px-3 cursor-pointer border rounded-sm bg-sky-800 text-white hover:bg-sky-600 transition-colors duration-200"
+              onClick={() => setModalEditBook(true)}
+            >
+              <FaPenToSquare /> Edit
+            </button>
+            <button
+              className="flex gap-1 justify-center items-center p-1 cursor-pointer border rounded-sm bg-red-800 text-white hover:bg-red-600 transition-colors duration-200"
+              onClick={() => setModalCancel(true)}
+            >
+              <FiTrash2 /> Delete
+            </button>
+          </div>
+        </div>
+      </div >
+      {/* Mobile */}
 
       {modalEditBook && (
         createPortal(
@@ -118,6 +149,5 @@ export const BookRow = ({ book, onSubmitHandler }: Props) => {
           document.body
         )}
     </>
-
-  )
+  );
 }

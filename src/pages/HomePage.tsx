@@ -1,6 +1,6 @@
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BookRow } from "../components/desktop/BookRow";
-import { FormAddBook, Target } from "../components/mobile";
+import { FormAddBook } from "../components/mobile";
 import { useBooksContext } from "../context/BooksProvider";
 import type { SubmitHandler } from "react-hook-form";
 import type { Book } from "../interfaces";
@@ -71,6 +71,19 @@ export const HomePage = () => {
                   </button>
                 </div>
               </div>
+              {/* Mobile */}
+              <div className="md:hidden">
+                {books.map((book, index) => (
+                  <BookRow
+                    key={index}
+                    book={book}
+                    onSubmitHandler={onSubmitHandlerEditBook}
+                  />
+                ))}
+              </div>
+              {/* Mobile */}
+
+              {/* Desktop */}
               <table className="hidden md:grid w-full text-sm text-left border border-gray-200 text-gray-700">
                 <thead className="bg-gray-100 text-gray-900 font-semibold">
                   <tr className="grid grid-cols-[2fr_1.5fr_1fr_0.5fr_0.9fr] px-4 py-2">
@@ -91,12 +104,7 @@ export const HomePage = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
-            {/* Mobile UI */}
-            <div className="flex flex-col gap-3 md:hidden mt-3">
-              {books.map((book, index) => (
-                <Target book={book} key={index} />
-              ))}
+              {/* Desktop */}
             </div>
             {/* modal */}
             {modalAddBook && (
