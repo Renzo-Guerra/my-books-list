@@ -13,3 +13,5 @@ export const bookSchema = z.object({
 });
 
 export type Book = z.infer<typeof bookSchema>;
+
+export type BookInput = z.input<typeof bookSchema>;

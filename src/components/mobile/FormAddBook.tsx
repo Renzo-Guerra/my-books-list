@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { bookSchema, type Book } from "../../interfaces";
+import { bookSchema, type Book, type BookInput } from "../../interfaces";
 import toast from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -16,7 +16,7 @@ export const FormAddBook = ({ onSubmitHandler, onCancelHandler }: props) => {
     handleSubmit,
     reset,
     formState: { isSubmitting, errors } }
-    = useForm<Book>({ resolver: zodResolver(bookSchema) });
+    = useForm<BookInput, any, Book>({ resolver: zodResolver(bookSchema) });
 
   const _onSubmitHandler: SubmitHandler<Book> = async (data: Book) => {
     await toast.promise(
